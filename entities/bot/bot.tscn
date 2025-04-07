@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://c22a2mqj5d4fv"]
+
+[ext_resource type="Texture2D" uid="uid://b22ph5k10i6nu" path="res://entities/bot/robot_front.png" id="1_cwism"]
+[ext_resource type="Script" uid="uid://d3wjpow4loaxi" path="res://entities/bot/bot.gd" id="1_qpkb6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cwism"]
+size = Vector2(100, 100)
+
+[node name="bot" type="Node2D"]
+script = ExtResource("1_qpkb6")
+
+[node name="RobotFront" type="Sprite2D" parent="."]
+scale = Vector2(0.12, 0.12)
+texture = ExtResource("1_cwism")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_cwism")
