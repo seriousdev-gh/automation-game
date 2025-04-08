@@ -47,13 +47,6 @@ texture = ExtResource("3_sugp2")
 [node name="bot" parent="bots" instance=ExtResource("2_sugp2")]
 position = Vector2(960, 540)
 
-[node name="bot2" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1060, 540)
-
-[node name="bot3" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(959, 646)
-commands = Array[String](["left", "down", "up", "right"])
-
 [node name="Button" type="Button" parent="."]
 offset_left = 52.0
 offset_top = 58.0

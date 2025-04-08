@@ -3,26 +3,30 @@ extends Node2D
 const size = 100
 var command_index = 0
 @export var commands: Array[String] = ["left", "left", "down", "down", "right", "up", "right", "up"]
+var position_shadow: Vector2
+
+func _ready() -> void:
+	position_shadow = position
 
 func cycle(duration: float):
 	var current_command = commands[command_index]
 	command_index = (command_index + 1) % commands.size()
-	var new_position = position
+	
 	match current_command:
 		"left": 
-			new_position += Vector2.LEFT * size
+			position_shadow += Vector2.LEFT * size
 		"right": 
-			new_position += Vector2.RIGHT * size
+			position_shadow += Vector2.RIGHT * size
 		"up": 
-			new_position += Vector2.UP * size
+			position_shadow += Vector2.UP * size
 		"down": 
-			new_position += Vector2.DOWN * size
+			position_shadow += Vector2.DOWN * size
 			
-	move_to_position(new_position, duration)
+	move_to_position(position_shadow, duration)
 	
 func move_to_position(target_position: Vector2, duration: float):
 	if tween:
-		tween.kill() # Stop previous tweens if any
+		tween.kill()
 		tween = create_tween()
 	else:
 		tween = create_tween()
