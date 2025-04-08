@@ -17,3 +17,7 @@ texture = ExtResource("1_cwism")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_cwism")
+
+[node name="reachRaycast" type="RayCast2D" parent="."]
+target_position = Vector2(0, -100)
+collide_with_areas = true
