@@ -14,52 +14,64 @@ wait_time = 0.4
 [node name="background" type="Node2D" parent="."]
 
 [node name="Floor" type="Sprite2D" parent="background"]
-position = Vector2(1010.53, 287.528)
-scale = Vector2(0.794, 0.794)
+position = Vector2(900, 200)
+scale = Vector2(0.777, 0.777)
 texture = ExtResource("3_sugp2")
 
 [node name="Floor2" type="Sprite2D" parent="background"]
-position = Vector2(1729.53, 287.528)
-scale = Vector2(0.794, 0.794)
+position = Vector2(1600, 200)
+scale = Vector2(0.777, 0.777)
 texture = ExtResource("3_sugp2")
 
 [node name="Floor3" type="Sprite2D" parent="background"]
-position = Vector2(294.528, 286.528)
-scale = Vector2(0.794, 0.794)
+position = Vector2(200, 200)
+scale = Vector2(0.777, 0.777)
 texture = ExtResource("3_sugp2")
 
 [node name="Floor4" type="Sprite2D" parent="background"]
-position = Vector2(1010.53, 1006.53)
-scale = Vector2(0.794, 0.794)
+position = Vector2(900, 900)
+scale = Vector2(0.777, 0.777)
 texture = ExtResource("3_sugp2")
 
 [node name="Floor5" type="Sprite2D" parent="background"]
-position = Vector2(1729.53, 1006.53)
-scale = Vector2(0.794, 0.794)
+position = Vector2(1600, 900)
+scale = Vector2(0.777, 0.777)
 texture = ExtResource("3_sugp2")
 
 [node name="Floor6" type="Sprite2D" parent="background"]
-position = Vector2(294.528, 1005.53)
-scale = Vector2(0.794, 0.794)
+position = Vector2(200, 900)
+scale = Vector2(0.777, 0.777)
 texture = ExtResource("3_sugp2")
 
 [node name="bots" type="Node" parent="."]
 
 [node name="bot" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(960, 540)
+position = Vector2(950, 550)
+
+[node name="bot7" parent="bots" instance=ExtResource("2_sugp2")]
+position = Vector2(1650, 550)
+commands = Array[String]([])
+
+[node name="bot6" parent="bots" instance=ExtResource("2_sugp2")]
+position = Vector2(1650, 650)
+commands = Array[String](["grab", "left", "right"])
+
+[node name="bot5" parent="bots" instance=ExtResource("2_sugp2")]
+position = Vector2(550, 750)
+commands = Array[String](["grab", "cw", "ccw", "cw", "cw", "cw", "cw"])
 
 [node name="bot2" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(859, 234)
+position = Vector2(850, 250)
 rotation = 1.57079
 commands = Array[String](["down", "down", "grab", "up", "up", "release"])
 
 [node name="bot3" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1163, 133)
+position = Vector2(1150, 150)
 rotation = 3.14159
 commands = Array[String](["left", "left", "grab", "right", "right", "release"])
 
 [node name="bot4" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1265, 440)
+position = Vector2(1250, 450)
 rotation = 4.71238
 commands = Array[String](["up", "up", "grab", "down", "down", "release"])
 
@@ -78,7 +90,10 @@ offset_bottom = 137.0
 text = "Stop"
 
 [node name="item" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(1163, 441)
+position = Vector2(550, 650)
+
+[node name="item2" parent="." instance=ExtResource("4_jyhfs")]
+position = Vector2(1150, 450)
 
 [connection signal="timeout" from="cycleTimer" to="." method="_on_cycle_timer_timeout"]
 [connection signal="pressed" from="Button" to="." method="_on_button_start_pressed"]
