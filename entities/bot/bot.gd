@@ -4,15 +4,16 @@ extends Node2D
 const size = 100
 var command_index = 0
 @export var commands: Array[String] = ["right", "right", "grab", "left", "left", "release"]
-var position_shadow: Vector2
-var rotation_shadow: float
+var real_position: Vector2
+var real_rotation: float
 var grab_offset := Vector2(0, -100.0)
 var grab_rotation := 0.0
+var held_item: Node2D = null
 
 func _ready() -> void:
 	position = position.snapped(Vector2(50.0, 50.0))
-	position_shadow = position
-	rotation_shadow = rotation
+	real_position = position
+	real_rotation = rotation
 
 func cycle(duration: float):
 	if commands.is_empty():
@@ -23,29 +24,40 @@ func cycle(duration: float):
 		
 	match current_command:
 		"left": 
-			position_shadow += Vector2.LEFT * size
-			move_to_position(position_shadow, duration)
+			real_position += Vector2.LEFT * size
+			move_to_position(real_position, duration)
 		"right": 
-			position_shadow += Vector2.RIGHT * size
-			move_to_position(position_shadow, duration)
+			real_position += Vector2.RIGHT * size
+			move_to_position(real_position, duration)
 		"up": 
-			position_shadow += Vector2.UP * size
-			move_to_position(position_shadow, duration)
+			real_position += Vector2.UP * size
+			move_to_position(real_position, duration)
 		"down": 
-			position_shadow += Vector2.DOWN * size
-			move_to_position(position_shadow, duration)
+			real_position += Vector2.DOWN * size
+			move_to_position(real_position, duration)
 		"grab":
 			if $reachRaycast.is_colliding():
 				var target = $reachRaycast.get_collider().get_owner()
 				grab_item(target)
 		"release":
-			held_item = null
+			if held_item:
+				var updated: Array[Node2D] = []
+				held_item.snapToGrid(updated)
+				held_item = null
 		"cw":
-			rotation_shadow += PI/2.0
-			rotate_to_angle(rotation_shadow, duration)
+			real_rotation += PI/2.0
+			#if real_rotation > 2 * PI:
+				#real_rotation -= 2 * PI
+			
+			real_rotation = snappedf(real_rotation, PI / 2.0)
+			rotate_to_angle(real_rotation, duration)
 		"ccw":
-			rotation_shadow -= PI/2.0
-			rotate_to_angle(rotation_shadow, duration)
+			real_rotation -= PI/2.0
+			#if real_rotation < 0:
+				#real_rotation += 2 * PI
+			
+			real_rotation = snappedf(real_rotation, PI / 2.0)
+			rotate_to_angle(real_rotation, duration)
 		_:
 			push_warning("Unhandled command: %s" % current_command)
 			
@@ -69,7 +81,6 @@ func move_to_position(target_position: Vector2, duration: float):
 		.set_trans(Tween.TRANS_SINE) \
 		.set_ease(Tween.EASE_IN_OUT)
 
-var held_item: Node = null
 
 func grab_item(item: Node2D):
 	if held_item:
@@ -79,6 +90,6 @@ func grab_item(item: Node2D):
 	grab_rotation = global_rotation - item.global_rotation
 
 func _process(delta):
-	if held_item:
-		held_item.global_position = global_position + grab_offset.rotated(global_rotation)
-		held_item.global_rotation = global_rotation - grab_rotation
+	if held_item:		
+		var updated: Array[Node2D] = []
+		held_item.updateAttachedTransforms(self, grab_offset, grab_rotation, updated)

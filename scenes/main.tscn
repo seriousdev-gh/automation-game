@@ -9,7 +9,7 @@
 script = ExtResource("1_0wfyh")
 
 [node name="cycleTimer" type="Timer" parent="."]
-wait_time = 0.4
+wait_time = 0.109
 
 [node name="background" type="Node2D" parent="."]
 
@@ -48,17 +48,15 @@ texture = ExtResource("3_sugp2")
 [node name="bot" parent="bots" instance=ExtResource("2_sugp2")]
 position = Vector2(950, 550)
 
-[node name="bot7" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1650, 550)
-commands = Array[String]([])
-
-[node name="bot6" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1650, 650)
-commands = Array[String](["grab", "left", "right"])
-
 [node name="bot5" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(550, 750)
-commands = Array[String](["grab", "cw", "ccw", "cw", "cw", "cw", "cw"])
+position = Vector2(450, 650)
+rotation = 1.5708
+commands = Array[String](["wait", "wait", "wait", "wait", "grab", "ccw", "cw", "release"])
+
+[node name="bot8" parent="bots" instance=ExtResource("2_sugp2")]
+position = Vector2(750, 650)
+rotation = -1.5708
+commands = Array[String](["grab", "cw", "ccw", "release", "wait", "wait", "wait", "wait"])
 
 [node name="bot2" parent="bots" instance=ExtResource("2_sugp2")]
 position = Vector2(850, 250)
@@ -92,8 +90,14 @@ text = "Stop"
 [node name="item" parent="." instance=ExtResource("4_jyhfs")]
 position = Vector2(550, 650)
 
+[node name="item3" parent="." instance=ExtResource("4_jyhfs")]
+position = Vector2(650, 650)
+
 [node name="item2" parent="." instance=ExtResource("4_jyhfs")]
 position = Vector2(1150, 450)
+
+[node name="item4" parent="." instance=ExtResource("4_jyhfs")]
+position = Vector2(650, 550)
 
 [connection signal="timeout" from="cycleTimer" to="." method="_on_cycle_timer_timeout"]
 [connection signal="pressed" from="Button" to="." method="_on_button_start_pressed"]
