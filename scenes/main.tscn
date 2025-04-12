@@ -1,15 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://b4k8vrjb75hbj"]
+[gd_scene load_steps=6 format=3 uid="uid://b4k8vrjb75hbj"]
 
 [ext_resource type="Script" uid="uid://dabl04pop0u8t" path="res://scenes/main.gd" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://c22a2mqj5d4fv" path="res://entities/bot/bot.tscn" id="2_sugp2"]
 [ext_resource type="Texture2D" uid="uid://25mhcfwjwdgq" path="res://resources/floor.png" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://dl7of4uhgf2xp" path="res://entities/item/item.tscn" id="4_jyhfs"]
 
+[sub_resource type="Theme" id="Theme_jyhfs"]
+
 [node name="main" type="Node2D"]
 script = ExtResource("1_0wfyh")
 
 [node name="cycleTimer" type="Timer" parent="."]
-wait_time = 0.109
+wait_time = 0.3
 
 [node name="background" type="Node2D" parent="."]
 
@@ -46,59 +48,98 @@ texture = ExtResource("3_sugp2")
 [node name="bots" type="Node" parent="."]
 
 [node name="bot" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(950, 550)
+position = Vector2(1250, 550)
 
 [node name="bot5" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(450, 650)
+position = Vector2(750, 650)
 rotation = 1.5708
 commands = Array[String](["wait", "wait", "wait", "wait", "grab", "ccw", "cw", "release"])
 
 [node name="bot8" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(750, 650)
+position = Vector2(1050, 650)
 rotation = -1.5708
 commands = Array[String](["grab", "cw", "ccw", "release", "wait", "wait", "wait", "wait"])
 
 [node name="bot2" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(850, 250)
+position = Vector2(1150, 250)
 rotation = 1.57079
 commands = Array[String](["down", "down", "grab", "up", "up", "release"])
 
 [node name="bot3" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1150, 150)
+position = Vector2(1450, 150)
 rotation = 3.14159
 commands = Array[String](["left", "left", "grab", "right", "right", "release"])
 
 [node name="bot4" parent="bots" instance=ExtResource("2_sugp2")]
-position = Vector2(1250, 450)
+position = Vector2(1550, 450)
 rotation = 4.71238
 commands = Array[String](["up", "up", "grab", "down", "down", "release"])
 
-[node name="Button" type="Button" parent="."]
-offset_left = 52.0
-offset_top = 58.0
-offset_right = 103.0
-offset_bottom = 89.0
-text = "Start"
+[node name="items" type="Node" parent="."]
 
-[node name="Button2" type="Button" parent="."]
-offset_left = 53.0
-offset_top = 106.0
-offset_right = 104.0
-offset_bottom = 137.0
+[node name="item" parent="items" instance=ExtResource("4_jyhfs")]
+position = Vector2(850, 650)
+
+[node name="item3" parent="items" instance=ExtResource("4_jyhfs")]
+position = Vector2(950, 650)
+
+[node name="item2" parent="items" instance=ExtResource("4_jyhfs")]
+position = Vector2(1450, 450)
+
+[node name="item4" parent="items" instance=ExtResource("4_jyhfs")]
+position = Vector2(950, 550)
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+z_index = 1
+offset_left = 26.0
+offset_top = 15.0
+offset_right = 514.0
+offset_bottom = 1024.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme = SubResource("Theme_jyhfs")
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Automation game"
+
+[node name="CodeEdit" type="CodeEdit" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Place robot instruction here"
+emoji_menu_enabled = false
+gutters_draw_line_numbers = true
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(0, 45.49)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="StopButton" type="Button" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
 text = "Stop"
 
-[node name="item" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(550, 650)
+[node name="PauseButton" type="Button" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Pause"
 
-[node name="item3" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(650, 650)
+[node name="StartButton" type="Button" parent="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Start"
 
-[node name="item2" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(1150, 450)
-
-[node name="item4" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(650, 550)
+[node name="StatusLine" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Status: Stopped"
 
 [connection signal="timeout" from="cycleTimer" to="." method="_on_cycle_timer_timeout"]
-[connection signal="pressed" from="Button" to="." method="_on_button_start_pressed"]
-[connection signal="pressed" from="Button2" to="." method="_on_button_stop_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/StopButton" to="." method="_on_button_reset_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/PauseButton" to="." method="_on_button_pause_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/StartButton" to="." method="_on_button_start_pressed"]

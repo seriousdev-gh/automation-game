@@ -2,6 +2,20 @@ extends Node2D
 
 var attachedItems: Array[ItemAttachmentPoint] = []
 
+var starting_position: Vector2
+var starting_rotation: float
+
+func _ready() -> void:
+	save()
+	
+func save() -> void:
+	starting_position = position.snapped(Vector2(50.0, 50.0))
+	starting_rotation = rotation
+
+func reset() -> void:
+	position = starting_position
+	rotation = starting_rotation
+
 func attach(node: Node2D):
 	var offset = node.global_position - global_position
 	var relative_rotation = global_rotation - node.global_rotation
