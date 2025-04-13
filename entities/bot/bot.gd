@@ -22,8 +22,8 @@ func _ready() -> void:
 	save()
 
 func save() -> void:
-	starting_position = position.snapped(Vector2(50.0, 50.0))
-	starting_rotation = rotation
+	starting_position = global_position.snapped(Vector2(100.0, 100.0))
+	starting_rotation = global_rotation
 	real_position = starting_position
 	real_rotation = starting_rotation
 
@@ -32,16 +32,17 @@ func reset() -> void:
 		tween_move.kill()
 	if tween_rotate: 
 		tween_rotate.kill()
-	position = starting_position
-	rotation = starting_rotation
+	global_position = starting_position
+	global_rotation = starting_rotation
 	real_position = starting_position
 	real_rotation = starting_rotation
 	command_index = 0
+	held_item = null
 
 func anim_pause() -> void:
-	if tween_move and tween_move.is_valid() and tween_move.is_running():
+	if tween_move:
 		tween_move.pause()
-	if tween_rotate and tween_rotate.is_valid() and tween_rotate.is_running(): 
+	if tween_rotate: 
 		tween_rotate.pause()
 		
 func anim_continue() -> void:
@@ -90,7 +91,7 @@ func rotate_to_angle(rotation_change: float, duration: float):
 		.set_ease(Tween.EASE_IN_OUT)
 	
 func move_to_position(position_change: Vector2, duration: float):
-	real_position = (real_position + position_change).snapped(Vector2(50.0, 50.0))
+	real_position = (real_position + position_change).snapped(Vector2(100.0, 100.0))
 	
 	if tween_move:
 		tween_move.kill()
@@ -110,6 +111,7 @@ func grab_item(item: Node2D):
 	grab_rotation = global_rotation - item.global_rotation
 
 func _process(delta):
-	if held_item:		
+	if held_item:
 		var updated: Array[Node2D] = []
 		held_item.updateAttachedTransforms(self, grab_offset, grab_rotation, updated)
+		
