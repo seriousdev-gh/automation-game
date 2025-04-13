@@ -3,7 +3,8 @@ var tween_move: Tween = null
 var tween_rotate: Tween = null
 const size = 100
 var command_index = 0
-@export var commands: Array[String] = ["right", "right", "grab", "left", "left", "release"]
+var commands: Array[String] = []
+var program_text: String
 
 var held_item: Node2D = null
 var grab_offset := Vector2(0, -100.0)
@@ -26,6 +27,12 @@ func save() -> void:
 	starting_rotation = global_rotation
 	real_position = starting_position
 	real_rotation = starting_rotation
+	
+	commands = []
+	for line in program_text.split("\n"):
+		if line == "":
+			continue
+		commands.append(line)
 
 func reset() -> void:
 	if tween_move:
