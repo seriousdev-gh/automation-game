@@ -19,6 +19,9 @@ var real_rotation: float
 var starting_position: Vector2
 var starting_rotation: float
 
+func kind() -> String:
+	return "bots"
+
 func _ready() -> void:
 	save()
 

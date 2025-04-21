@@ -5,6 +5,9 @@ var attachedItems: Array[ItemAttachmentPoint] = []
 var starting_position: Vector2
 var starting_rotation: float
 
+func kind() -> String:
+	return "items"
+	
 func _ready() -> void:
 	save()
 	

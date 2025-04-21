@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dl7of4uhgf2xp"]
 
 [ext_resource type="Script" uid="uid://ct3ebcjyat16c" path="res://entities/item/item.gd" id="1_6woft"]
-[ext_resource type="Texture2D" uid="uid://8e8opoh17oe3" path="res://entities/item/item_crate.png" id="1_f61xm"]
+[ext_resource type="Texture2D" uid="uid://yiosajlnn273" path="res://entities/item/panel.png" id="2_6woft"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f61xm"]
 size = Vector2(80, 80)
@@ -12,7 +12,7 @@ script = ExtResource("1_6woft")
 [node name="ItemCrate" type="Sprite2D" parent="."]
 texture_filter = 2
 scale = Vector2(0.1, 0.1)
-texture = ExtResource("1_f61xm")
+texture = ExtResource("2_6woft")
 
 [node name="Area2D" type="Area2D" parent="." groups=["draggable"]]
 collision_layer = 3

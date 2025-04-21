@@ -2,10 +2,7 @@ extends Node2D
 
 
 func _ready() -> void:
-	$items/item.attach($items/item3)
-	$items/item3.attach($items/item)
-	$items/item3.attach($items/item4)
-	$items/item4.attach($items/item3)
+	update_selection()
 
 func _on_cycle_timer_timeout() -> void:
 	for bot in $bots.get_children():
@@ -86,23 +83,33 @@ func start_drag(node):
 func stop_drag():
 	if dragged_node:
 		dragged_node.global_position = dragged_node.global_position.snapped(Vector2(100.0, 100.0))
-		if dragged_node.get_parent() == $items:
-			dragged_node.updateAttachedTransformsSelf()
+		if in_play_area(dragged_node):
+			if dragged_node.get_parent() == $items:
+				dragged_node.updateAttachedTransformsSelf()
+		else:
+			dragged_node.queue_free()
+			deselect()
 			
 	dragged_node = null
 
 func select(node):
 	$Selection.visible = true
 	selected_node = node
-	if selected_node.get_parent() == $bots:
-		%CodeEdit.text = selected_node.program_text
+	update_selection()
 
 func deselect():
-	if selected_node:
-		$Selection.visible = false
-	
+	$Selection.visible = false
 	selected_node = null
-	%CodeEdit.text = ""
+	update_selection()
+
+func update_selection():
+	if !selected_node || selected_node.kind() != "bots":
+		%CodeEdit.text = ""
+		%RobotInfo.text = "Select bot to edit program"
+		return
+		
+	%CodeEdit.text = selected_node.program_text
+	%RobotInfo.text = "Selected bot: " + str(selected_node.name)
 
 func _process(delta):
 	if dragged_node:
@@ -117,3 +124,32 @@ func _process(delta):
 func _on_code_edit_text_changed() -> void:
 	if selected_node && selected_node.get_parent() == $bots:
 		selected_node.program_text = %CodeEdit.text
+
+func in_play_area(node: Node2D) -> bool:
+	var area = node.find_child("Area2D")
+	return !$DespawnArea.overlaps_area(area) && !$DespawnArea2.overlaps_area(area)
+
+
+func _on_bots_child_order_changed() -> void:
+	if !$bots:
+		return
+	
+	for i in $bots.get_children().size():
+		var bot = $bots.get_child(i)
+		bot.name = str(i + 1)
+		bot.find_child("NameLabel").text = str(i + 1)
+		
+	update_selection()
+
+
+func _on_texture_rect_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		print(event)
+
+func node_create_started(new_node: Node2D) -> void:
+	find_child(new_node.kind()).add_child(new_node)
+	start_drag(new_node)
+	select(new_node)
+
+func node_create_finished() -> void:
+	stop_drag()
