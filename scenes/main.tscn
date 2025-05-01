@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b4k8vrjb75hbj"]
+[gd_scene load_steps=16 format=3 uid="uid://b4k8vrjb75hbj"]
 
 [ext_resource type="Script" uid="uid://dabl04pop0u8t" path="res://scenes/main.gd" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://c22a2mqj5d4fv" path="res://entities/bot/bot.tscn" id="2_sugp2"]
@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://yiosajlnn273" path="res://entities/item/panel.png" id="4_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b22ph5k10i6nu" path="res://entities/bot/robot_front.png" id="5_o6xl0"]
 [ext_resource type="Script" uid="uid://c65lrkaoq4xr3" path="res://scripts/create.gd" id="5_tefeu"]
+[ext_resource type="Texture2D" uid="uid://cl381avnnosis" path="res://entities/assembler/panel_wide.png" id="9_choun"]
+[ext_resource type="PackedScene" uid="uid://2qywjxudlm4q" path="res://entities/assembler/assembler.tscn" id="10_ya4ey"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tbgi4"]
 size = Vector2(645.25, 1220.5)
@@ -62,6 +64,8 @@ texture = ExtResource("3_sugp2")
 [node name="bots" type="Node" parent="."]
 
 [node name="items" type="Node" parent="."]
+
+[node name="machines" type="Node" parent="."]
 
 [node name="Selection" parent="." instance=ExtResource("4_tbgi4")]
 z_index = 2
@@ -126,6 +130,14 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 8
 
+[node name="LoadButton" type="Button" parent="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Load"
+
+[node name="SaveButton" type="Button" parent="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Save"
+
 [node name="StopButton" type="Button" parent="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
 text = "Stop"
@@ -188,9 +200,21 @@ stretch_mode = 5
 script = ExtResource("5_tefeu")
 scene = ExtResource("2_sugp2")
 
+[node name="TextureRect3" type="TextureRect" parent="Control/PanelContainer2/MarginContainer/HBoxContainer"]
+modulate = Color(0, 1, 0.0833333, 1)
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("9_choun")
+expand_mode = 3
+stretch_mode = 4
+script = ExtResource("5_tefeu")
+scene = ExtResource("10_ya4ey")
+
 [connection signal="timeout" from="cycleTimer" to="." method="_on_cycle_timer_timeout"]
 [connection signal="child_order_changed" from="bots" to="." method="_on_bots_child_order_changed"]
 [connection signal="text_changed" from="Control/PanelContainer/VBoxContainer/CodeEdit" to="." method="_on_code_edit_text_changed"]
+[connection signal="pressed" from="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/LoadButton" to="." method="_on_load_button_pressed"]
+[connection signal="pressed" from="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/StopButton" to="." method="_on_button_reset_pressed"]
 [connection signal="pressed" from="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/PauseButton" to="." method="_on_button_pause_pressed"]
 [connection signal="pressed" from="Control/PanelContainer/VBoxContainer/MarginContainer/PanelContainer/HBoxContainer/StartButton" to="." method="_on_button_start_pressed"]
@@ -200,3 +224,6 @@ scene = ExtResource("2_sugp2")
 [connection signal="gui_input" from="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect2" to="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect2" method="_on_gui_input"]
 [connection signal="on_node_create_finished" from="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect2" to="." method="node_create_finished"]
 [connection signal="on_node_create_started" from="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect2" to="." method="node_create_started"]
+[connection signal="gui_input" from="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect3" to="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect3" method="_on_gui_input"]
+[connection signal="on_node_create_finished" from="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect3" to="." method="node_create_finished"]
+[connection signal="on_node_create_started" from="Control/PanelContainer2/MarginContainer/HBoxContainer/TextureRect3" to="." method="node_create_started"]

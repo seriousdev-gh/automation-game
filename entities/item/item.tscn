@@ -11,10 +11,10 @@ script = ExtResource("1_6woft")
 
 [node name="ItemCrate" type="Sprite2D" parent="."]
 texture_filter = 2
-scale = Vector2(0.1, 0.1)
+scale = Vector2(0.08, 0.08)
 texture = ExtResource("2_6woft")
 
-[node name="Area2D" type="Area2D" parent="." groups=["draggable"]]
+[node name="Area2D" type="Area2D" parent="." groups=["draggable", "joinable"]]
 collision_layer = 3
 collision_mask = 3
 

@@ -23,9 +23,9 @@ func kind() -> String:
 	return "bots"
 
 func _ready() -> void:
-	save()
+	start_init()
 
-func save() -> void:
+func start_init() -> void:
 	starting_position = global_position.snapped(Vector2(100.0, 100.0))
 	starting_rotation = global_rotation
 	real_position = starting_position
@@ -81,8 +81,7 @@ func cycle(duration: float):
 				grab_item(target)
 		"release":
 			if held_item:
-				var updated: Array[Node2D] = []
-				held_item.snapToGrid(updated)
+				held_item.snapToGrid()
 				held_item = null
 		"wait": pass
 		_:
@@ -120,8 +119,19 @@ func grab_item(item: Node2D):
 	held_item = item
 	grab_rotation = global_rotation - item.global_rotation
 
-func _process(delta):
+func _process(_delta):
 	if held_item:
-		var updated: Array[Node2D] = []
-		held_item.updateAttachedTransforms(self, grab_offset, grab_rotation, updated)
+		held_item.updateAttachedTransforms(self, grab_offset, grab_rotation)
 		
+func snapToGrid():
+	global_position = global_position.snapped(Vector2(100.0, 100.0))
+
+func save():
+	return {
+		"filename" : get_scene_file_path(),
+		"parent" : get_parent().get_path(),
+		"pos_x" : position.x,
+		"pos_y" : position.y,
+		"rotation": rotation,
+		"program_text": program_text,
+	}
