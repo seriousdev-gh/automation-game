@@ -11,3 +11,6 @@ func is_paused() -> bool:
 	
 func is_running() -> bool:
 	return state == Running
+	
+func snapToGrid(node):
+	node.global_position = node.global_position.snapped(Vector2(100.0, 100.0))

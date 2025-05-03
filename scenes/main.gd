@@ -1,14 +1,21 @@
 extends Node2D
 
+# z indexes:
+# ui > items > machines, bots > item spawns
+
+
+# delay some logic depending on timer by one frame, to syncronize things
+var timer_timed_out = false
 
 func _ready() -> void:
 	update_selection()
 
 func _on_cycle_timer_timeout() -> void:
-	for bot in $bots.get_children():
-		bot.cycle($cycleTimer.wait_time)
+	for item_spawn in $item_spawns.get_children():
+		item_spawn.cycle($cycleTimer.wait_time)
 	for machine in $machines.get_children():
 		machine.cycle($cycleTimer.wait_time)
+	timer_timed_out = true
 
 func _on_button_start_pressed() -> void:
 	if Globals.is_stopped():
@@ -40,7 +47,7 @@ func _on_button_reset_pressed() -> void:
 		for bot in $bots.get_children():
 			bot.reset()
 		for item in $items.get_children():
-			item.reset()
+			item.queue_free()
 		$cycleTimer.stop()
 	
 	Globals.state = Globals.Stopped
@@ -107,8 +114,8 @@ func stop_drag():
 				else:
 					dragged_node.global_position = drag_start_position
 			else:
-				dragged_node.snapToGrid()
-			if dragged_node.get_parent() == $items:
+				Globals.snapToGrid(dragged_node)
+			if dragged_node.has_method("updateAttachedTransformsSelf"):
 				dragged_node.updateAttachedTransformsSelf()
 		else:
 			dragged_node.queue_free()
@@ -136,9 +143,14 @@ func update_selection():
 	%RobotInfo.text = "Selected bot: " + str(selected_node.name)
 
 func _process(_delta):
+	if timer_timed_out:
+		timer_timed_out = false
+		for bot in $bots.get_children():
+			bot.cycle($cycleTimer.wait_time)
+			
 	if dragged_node:
 		dragged_node.global_position = get_global_mouse_position() + drag_offset
-		if dragged_node.get_parent() == $items:
+		if dragged_node.has_method("updateAttachedTransformsSelf"):
 			dragged_node.updateAttachedTransformsSelf()
 	
 	if selected_node:
@@ -186,21 +198,20 @@ func _on_save_button_pressed() -> void:
 		save_game("level")
 
 func save_game(file: String):
-	var save_file = FileAccess.open("user://" + file + ".json", FileAccess.WRITE)
+	var content = []
+	
 	for node in simulation_nodes():
-		# Check the node is an instanced scene so it can be instanced again during load.
 		if node.scene_file_path.is_empty():
 			print("persistent node '%s' is not an instanced scene, skipped" % node.name)
 			continue
-
-		# Call the node's save function.
 		var node_data = node.call("save")
-
-		# JSON provides a static method to serialized JSON string.
 		var json_string = JSON.stringify(node_data)
-
-		# Store the save dictionary as a new line in the save file.
-		save_file.store_line(json_string)
+		content.push_back(json_string)
+	
+	var save_file = FileAccess.open("user://" + file + ".json", FileAccess.WRITE)
+	
+	for line in content:
+		save_file.store_line(line)
 	
 func load_game(file: String):
 	var path = "user://" + file + ".json"
@@ -222,19 +233,16 @@ func load_game(file: String):
 
 		var node_data = json.data
 
-		# Firstly, we need to create the object and add it to the tree and set its position.
 		var new_object = load(node_data["filename"]).instantiate()
 		get_node(node_data["parent"]).add_child(new_object)
 		new_object.position = Vector2(node_data["pos_x"], node_data["pos_y"])
+		new_object.rotation = node_data["rotation"]
 
-		# Now we set the remaining variables.
-		for i in node_data.keys():
-			if i == "filename" or i == "parent" or i == "pos_x" or i == "pos_y":
-				continue
-			new_object.set(i, node_data[i])
+		if new_object.has_method("load_from"):
+			new_object.load_from(node_data)
 
 func simulation_nodes():
-	return $bots.get_children() + $items.get_children() + $machines.get_children()
+	return $bots.get_children() + $items.get_children() + $machines.get_children() + $item_spawns.get_children()
 
 func _on_load_button_pressed() -> void:
 	if Globals.is_stopped():

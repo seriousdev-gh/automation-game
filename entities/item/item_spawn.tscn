@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7liicvn3jssj"]
+
+[ext_resource type="Texture2D" uid="uid://yiosajlnn273" path="res://entities/item/panel.png" id="1_ds6p5"]
+[ext_resource type="Script" uid="uid://b7h4my5w7pjmy" path="res://entities/item/item_spawn.gd" id="1_r8n5a"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r8n5a"]
+size = Vector2(71, 72)
+
+[node name="ItemSpawn" type="Node2D"]
+z_index = 1
+script = ExtResource("1_r8n5a")
+
+[node name="Panel" type="Sprite2D" parent="."]
+modulate = Color(0.41, 0.41, 0.41, 1)
+scale = Vector2(0.08, 0.08)
+texture = ExtResource("1_ds6p5")
+
+[node name="Area2D" type="Area2D" parent="." groups=["draggable"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_r8n5a")

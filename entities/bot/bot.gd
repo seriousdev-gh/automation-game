@@ -1,4 +1,5 @@
 extends Node2D
+
 var tween_move: Tween = null
 var tween_rotate: Tween = null
 const size = 100
@@ -135,3 +136,6 @@ func save():
 		"rotation": rotation,
 		"program_text": program_text,
 	}
+
+func load_from(data):
+	program_text = data["program_text"]

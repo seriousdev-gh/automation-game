@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b4k8vrjb75hbj"]
+[gd_scene load_steps=17 format=3 uid="uid://b4k8vrjb75hbj"]
 
 [ext_resource type="Script" uid="uid://dabl04pop0u8t" path="res://scenes/main.gd" id="1_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://c22a2mqj5d4fv" path="res://entities/bot/bot.tscn" id="2_sugp2"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://yiosajlnn273" path="res://entities/item/panel.png" id="4_tefeu"]
 [ext_resource type="Texture2D" uid="uid://b22ph5k10i6nu" path="res://entities/bot/robot_front.png" id="5_o6xl0"]
 [ext_resource type="Script" uid="uid://c65lrkaoq4xr3" path="res://scripts/create.gd" id="5_tefeu"]
+[ext_resource type="PackedScene" uid="uid://b7liicvn3jssj" path="res://entities/item/item_spawn.tscn" id="6_choun"]
 [ext_resource type="Texture2D" uid="uid://cl381avnnosis" path="res://entities/assembler/panel_wide.png" id="9_choun"]
 [ext_resource type="PackedScene" uid="uid://2qywjxudlm4q" path="res://entities/assembler/assembler.tscn" id="10_ya4ey"]
 
@@ -67,8 +68,10 @@ texture = ExtResource("3_sugp2")
 
 [node name="machines" type="Node" parent="."]
 
+[node name="item_spawns" type="Node" parent="."]
+
 [node name="Selection" parent="." instance=ExtResource("4_tbgi4")]
-z_index = 2
+z_index = 100
 position = Vector2(-72.9999, -78)
 
 [node name="DespawnArea" type="Area2D" parent="."]
@@ -189,7 +192,8 @@ texture = ExtResource("4_tefeu")
 expand_mode = 4
 stretch_mode = 5
 script = ExtResource("5_tefeu")
-scene = ExtResource("4_jyhfs")
+spawn_scene = ExtResource("6_choun")
+item_scene = ExtResource("4_jyhfs")
 
 [node name="TextureRect2" type="TextureRect" parent="Control/PanelContainer2/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
@@ -198,7 +202,7 @@ texture = ExtResource("5_o6xl0")
 expand_mode = 4
 stretch_mode = 5
 script = ExtResource("5_tefeu")
-scene = ExtResource("2_sugp2")
+spawn_scene = ExtResource("2_sugp2")
 
 [node name="TextureRect3" type="TextureRect" parent="Control/PanelContainer2/MarginContainer/HBoxContainer"]
 modulate = Color(0, 1, 0.0833333, 1)
@@ -208,7 +212,7 @@ texture = ExtResource("9_choun")
 expand_mode = 3
 stretch_mode = 4
 script = ExtResource("5_tefeu")
-scene = ExtResource("10_ya4ey")
+spawn_scene = ExtResource("10_ya4ey")
 
 [connection signal="timeout" from="cycleTimer" to="." method="_on_cycle_timer_timeout"]
 [connection signal="child_order_changed" from="bots" to="." method="_on_bots_child_order_changed"]
