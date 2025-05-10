@@ -76,10 +76,7 @@ func cycle(duration: float):
 		"down": move_to_position(Vector2.DOWN * size, duration)
 		"cw": rotate_to_angle(PI/2.0, duration)
 		"ccw": rotate_to_angle(-PI/2.0, duration)
-		"grab":
-			if $reachRaycast.is_colliding():
-				var target = $reachRaycast.get_collider().get_owner()
-				grab_item(target)
+		"grab": grab_item()
 		"release":
 			if held_item:
 				held_item.snapToGrid()
@@ -113,12 +110,26 @@ func move_to_position(position_change: Vector2, duration: float):
 		.set_ease(Tween.EASE_IN_OUT)
 
 
-func grab_item(item: Node2D):
+func grab_item():
 	if held_item:
 		return
 
-	held_item = item
-	grab_rotation = global_rotation - item.global_rotation
+	var target = null
+
+	var query = PhysicsPointQueryParameters2D.new()
+	query.position = global_position + grab_offset
+	query.collide_with_areas = true
+	query.collision_mask = 0b10
+	var results = get_world_2d().direct_space_state.intersect_point(query)
+	for result in results:
+		if result.collider.is_in_group("draggable"):
+			target = result.collider.get_owner()
+	
+	if !target:
+		return
+
+	held_item = target
+	grab_rotation = global_rotation - target.global_rotation
 
 func _process(_delta):
 	if held_item:
@@ -139,3 +150,8 @@ func save():
 
 func load_from(data):
 	program_text = data["program_text"]
+
+
+func _on_area_2d_area_entered(area: Area2D) -> void:
+	if area.is_in_group("dynamic_item"):
+		get_tree().get_root().get_node("main").on_dynamic_item_collision()

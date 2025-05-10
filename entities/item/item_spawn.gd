@@ -9,8 +9,6 @@ func reset():
 	pass
 
 func cycle(_dt):
-	print("Spawn cycle")
-	print($Area2D.get_overlapping_areas())
 	if $Area2D.get_overlapping_areas().is_empty():
 		var new_node = item_scene.instantiate()
 		new_node.global_position = global_position

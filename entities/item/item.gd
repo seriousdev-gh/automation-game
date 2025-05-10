@@ -64,3 +64,8 @@ func save():
 		"pos_y" : position.y,
 		"rotation": rotation,
 	}
+
+
+func _on_area_2d_area_entered(area: Area2D) -> void:
+	if area.is_in_group("dynamic_item"):
+		get_tree().get_root().get_node("main").on_dynamic_item_collision()

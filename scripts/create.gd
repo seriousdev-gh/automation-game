@@ -7,6 +7,9 @@ signal on_node_create_started(new_node: Node2D)
 signal on_node_create_finished
 
 func _on_gui_input(event: InputEvent) -> void:
+	if !Globals.is_stopped():
+		return
+	
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var rect = get_global_rect()

@@ -1,23 +1,17 @@
 extends Node2D
 
+# TODO: rename spawn to input
+
 # z indexes:
 # ui > items > machines, bots > item spawns
-
-
-# delay some logic depending on timer by one frame, to syncronize things
-var timer_timed_out = false
 
 func _ready() -> void:
 	update_selection()
 
-func _on_cycle_timer_timeout() -> void:
-	for item_spawn in $item_spawns.get_children():
-		item_spawn.cycle($cycleTimer.wait_time)
-	for machine in $machines.get_children():
-		machine.cycle($cycleTimer.wait_time)
-	timer_timed_out = true
-
 func _on_button_start_pressed() -> void:
+	if Globals.is_collided():
+		return
+	
 	if Globals.is_stopped():
 		for bot in $bots.get_children():
 			bot.start_init()
@@ -34,16 +28,27 @@ func _on_button_start_pressed() -> void:
 	%StatusLine.text = "Status: Running"
 	
 func _on_button_pause_pressed() -> void:
-	if Globals.is_running():
-		for bot in $bots.get_children():
-			bot.anim_pause()
-		$cycleTimer.paused = true
-		
+	if Globals.is_collided():
+		return
+	
+	pause()
 	Globals.state = Globals.Paused
 	%StatusLine.text = "Status: Paused"
 
+func pause_and_fail():
+	pause()
+	Globals.state = Globals.Collided
+	%StatusLine.text = "Status: Collision is not allowed"
+
+func pause():
+	if Globals.is_running():
+		for bot in $bots.get_children():
+			bot.anim_pause()
+	
+	$cycleTimer.paused = true
+
 func _on_button_reset_pressed() -> void:
-	if Globals.is_running() || Globals.is_paused():
+	if !Globals.is_stopped():
 		for bot in $bots.get_children():
 			bot.reset()
 		for item in $items.get_children():
@@ -85,7 +90,7 @@ func check_mouse_collision_with_entities(_event):
 			return
 
 func check_collision(item: Node2D) -> bool:
-	var item_collider = item.find_child("Area2D", false)
+	var item_collider = item.get_node("Area2D")
 	
 	var results = item_collider.get_overlapping_areas()
 	for result in results:
@@ -136,18 +141,20 @@ func deselect():
 func update_selection():
 	if !selected_node || selected_node.kind() != "bots":
 		%CodeEdit.text = ""
+		%CodeEdit.editable = false
 		%RobotInfo.text = "Select bot to edit program"
 		return
 		
+	%CodeEdit.editable = true
 	%CodeEdit.text = selected_node.program_text
 	%RobotInfo.text = "Selected bot: " + str(selected_node.name)
+	
+	# fix missing caret, it is known issue in godot
+	%CodeEdit.grab_focus()
+	%CodeEdit.set_caret_blink_enabled(true)
+	
 
 func _process(_delta):
-	if timer_timed_out:
-		timer_timed_out = false
-		for bot in $bots.get_children():
-			bot.cycle($cycleTimer.wait_time)
-			
 	if dragged_node:
 		dragged_node.global_position = get_global_mouse_position() + drag_offset
 		if dragged_node.has_method("updateAttachedTransformsSelf"):
@@ -162,7 +169,7 @@ func _on_code_edit_text_changed() -> void:
 		selected_node.program_text = %CodeEdit.text
 
 func in_play_area(node: Node2D) -> bool:
-	var area = node.find_child("Area2D")
+	var area = node.get_node("Area2D")
 	return !$DespawnArea.overlaps_area(area) && !$DespawnArea2.overlaps_area(area)
 
 
@@ -173,7 +180,7 @@ func _on_bots_child_order_changed() -> void:
 	for i in $bots.get_children().size():
 		var bot = $bots.get_child(i)
 		bot.name = str(i + 1)
-		bot.find_child("NameLabel").text = str(i + 1)
+		bot.get_node("NameLabel").text = str(i + 1)
 		
 	update_selection()
 
@@ -184,7 +191,7 @@ func _on_texture_rect_gui_input(event: InputEvent) -> void:
 
 func node_create_started(new_node: Node2D) -> void:
 	dragged_node_new = true
-	find_child(new_node.kind()).add_child(new_node)
+	get_node(new_node.kind()).add_child(new_node)
 	start_drag(new_node)
 	select(new_node)
 
@@ -249,3 +256,7 @@ func _on_load_button_pressed() -> void:
 		load_game("level")
 		deselect()
 		update_selection()
+
+func on_dynamic_item_collision():
+	if Globals.is_running():
+		pause_and_fail()

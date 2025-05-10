@@ -28,3 +28,4 @@ window/stretch/mode="viewport"
 [global_group]
 
 draggable=""
+dynamic_item="Items that could move and collide. COllision between two dynamic items is not allowed."
