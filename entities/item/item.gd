@@ -1,9 +1,16 @@
 extends Node2D
 
+enum {Spawning,Free,Held}
+
 var attachedItems: Array[ItemAttachmentPoint] = []
 
 var starting_position: Vector2
 var starting_rotation: float
+var item_type: String
+var state
+
+# TODO: rename
+var tween_temp: Tween = null
 
 func kind() -> String:
 	return "items"
@@ -14,6 +21,8 @@ func _ready() -> void:
 func start_init() -> void:
 	starting_position = global_position.snapped(Vector2(100.0, 100.0))
 	starting_rotation = global_rotation
+	$Label.text = item_type
+	state = Spawning
 
 func reset() -> void:
 	global_position = starting_position
@@ -54,6 +63,43 @@ func snapToGrid(updated: Array[Node2D] = []):
 	global_rotation = snappedf(global_rotation, PI / 2.0)
 	for item in attachedItems:
 		item.node.snapToGrid(updated)
+
+func animate_input(dt):
+	if tween_temp:
+		tween_temp.kill()
+		
+	dt = dt * 0.8
+		
+	var initial_scale = $Sprite.scale
+	var initial_modulate = $Sprite.modulate
+	$Sprite.scale = Vector2(0.04, 0.04)
+	$Sprite.modulate = Color(1.0, 1.0, 1.0, 0.5)
+	tween_temp = get_tree().create_tween()
+	tween_temp.tween_property($Sprite, "scale", initial_scale, dt)
+	tween_temp.parallel().tween_property($Sprite, "modulate", initial_modulate, dt)
+	tween_temp.tween_callback(set_state_free)
+	
+func animate_output(dt):
+	if tween_temp:
+		tween_temp.kill()
+		
+	dt = dt * 0.8
+	
+	$Area2D.queue_free()
+	
+	tween_temp = get_tree().create_tween()
+	tween_temp.tween_property($Sprite, "scale", Vector2(0.04, 0.04), dt)
+	tween_temp.parallel().tween_property($Sprite, "modulate", Color(1.0, 1.0, 1.0, 0.0), dt)
+	tween_temp.tween_callback(queue_free)
+
+func set_state_held():
+	state = Held
+	
+func set_state_free():
+	state = Free
+	
+func is_free() -> bool:
+	return state == Free
 
 func save():
 	# TODO: save attachedItems

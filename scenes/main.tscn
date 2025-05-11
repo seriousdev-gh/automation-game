@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://b4k8vrjb75hbj"]
+[gd_scene load_steps=19 format=3 uid="uid://b4k8vrjb75hbj"]
 
 [ext_resource type="Script" uid="uid://dabl04pop0u8t" path="res://scenes/main.gd" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://jc2bva44pk0x" path="res://scenes/main_timer.gd" id="2_eb6dy"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dl7of4uhgf2xp" path="res://entities/item/item.tscn" id="4_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://y5q4m88qj0bl" path="res://scenes/selection.tscn" id="4_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://yiosajlnn273" path="res://entities/item/panel.png" id="4_tefeu"]
+[ext_resource type="PackedScene" uid="uid://dex7htgvjf0wv" path="res://levels/level1.tscn" id="4_trceg"]
 [ext_resource type="Texture2D" uid="uid://b22ph5k10i6nu" path="res://entities/bot/robot_front.png" id="5_o6xl0"]
 [ext_resource type="Script" uid="uid://c65lrkaoq4xr3" path="res://scripts/create.gd" id="5_tefeu"]
 [ext_resource type="PackedScene" uid="uid://b7liicvn3jssj" path="res://entities/item/item_spawn.tscn" id="6_choun"]
@@ -75,6 +76,11 @@ unique_name_in_owner = true
 
 [node name="item_spawns" type="Node" parent="."]
 unique_name_in_owner = true
+
+[node name="level" type="Node" parent="."]
+
+[node name="Level1" parent="level" instance=ExtResource("4_trceg")]
+position = Vector2(1050, 350)
 
 [node name="Selection" parent="." instance=ExtResource("4_tbgi4")]
 z_index = 100

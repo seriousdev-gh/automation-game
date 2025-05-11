@@ -79,6 +79,7 @@ func cycle(duration: float):
 		"grab": grab_item()
 		"release":
 			if held_item:
+				held_item.set_state_free()
 				held_item.snapToGrid()
 				held_item = null
 		"wait": pass
@@ -127,9 +128,13 @@ func grab_item():
 	
 	if !target:
 		return
+	
+	if !target.is_free():
+		return
 
 	held_item = target
-	grab_rotation = global_rotation - target.global_rotation
+	grab_rotation = global_rotation - held_item.global_rotation
+	held_item.set_state_held()
 
 func _process(_delta):
 	if held_item:

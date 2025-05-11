@@ -159,9 +159,16 @@ func _process(_delta):
 		dragged_node.global_position = get_global_mouse_position() + drag_offset
 		if dragged_node.has_method("updateAttachedTransformsSelf"):
 			dragged_node.updateAttachedTransformsSelf()
+			
+		if Input.is_action_just_pressed("rotate_ccw"):
+			dragged_node.rotation_degrees -= 90
+			
+		if Input.is_action_just_pressed("rotate_cw"):
+			dragged_node.rotation_degrees += 90
 	
 	if selected_node:
 		$Selection.global_position = selected_node.global_position + Vector2.UP * 50
+		
 
 
 func _on_code_edit_text_changed() -> void:
@@ -202,58 +209,12 @@ func node_create_finished() -> void:
 
 func _on_save_button_pressed() -> void:
 	if Globals.is_stopped():
-		save_game("level")
+		SaveGame.run(self, "level")
 
-func save_game(file: String):
-	var content = []
-	
-	for node in simulation_nodes():
-		if node.scene_file_path.is_empty():
-			print("persistent node '%s' is not an instanced scene, skipped" % node.name)
-			continue
-		var node_data = node.call("save")
-		var json_string = JSON.stringify(node_data)
-		content.push_back(json_string)
-	
-	var save_file = FileAccess.open("user://" + file + ".json", FileAccess.WRITE)
-	
-	for line in content:
-		save_file.store_line(line)
-	
-func load_game(file: String):
-	var path = "user://" + file + ".json"
-	if not FileAccess.file_exists(path):
-		print("Savefile not found. Path: ", path)
-		return # Error! We don't have a save to load.
-
-	for node in simulation_nodes():
-		node.queue_free()
-
-	var save_file = FileAccess.open(path, FileAccess.READ)
-	while save_file.get_position() < save_file.get_length():
-		var json_string = save_file.get_line()
-		var json = JSON.new()
-		var parse_result = json.parse(json_string)
-		if not parse_result == OK:
-			print("JSON Parse Error: ", json.get_error_message(), " in ", json_string, " at line ", json.get_error_line())
-			continue
-
-		var node_data = json.data
-
-		var new_object = load(node_data["filename"]).instantiate()
-		get_node(node_data["parent"]).add_child(new_object)
-		new_object.position = Vector2(node_data["pos_x"], node_data["pos_y"])
-		new_object.rotation = node_data["rotation"]
-
-		if new_object.has_method("load_from"):
-			new_object.load_from(node_data)
-
-func simulation_nodes():
-	return $bots.get_children() + $items.get_children() + $machines.get_children() + $item_spawns.get_children()
 
 func _on_load_button_pressed() -> void:
 	if Globals.is_stopped():
-		load_game("level")
+		LoadGame.run(self, "level")
 		deselect()
 		update_selection()
 

@@ -9,7 +9,7 @@ size = Vector2(90, 90)
 [sub_resource type="CircleShape2D" id="CircleShape2D_x15n6"]
 radius = 41.1947
 
-[node name="bot" type="Node2D"]
+[node name="bot" type="Node2D" groups=["saveable"]]
 z_index = 5
 script = ExtResource("1_qpkb6")
 metadata/_edit_vertical_guides_ = [-50.0]

@@ -10,7 +10,7 @@ size = Vector2(186, 94)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yngo0"]
 
-[node name="Assembler" type="Node2D"]
+[node name="Assembler" type="Node2D" groups=["saveable"]]
 z_index = 4
 script = ExtResource("1_wltfe")
 
